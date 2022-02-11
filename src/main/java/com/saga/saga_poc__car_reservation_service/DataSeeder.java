@@ -33,9 +33,9 @@ public class DataSeeder implements CommandLineRunner {
             car3.setMake("Porsche");
             car3.setModel("911");
             car3.setMileage(78702L);
-            System.out.println("saving hotel " + carRepository.save(car1));
-            System.out.println("saving hotel " + carRepository.save(car2));
-            System.out.println("saving hotel " + carRepository.save(car3));
+            System.out.println("saving car " + carRepository.save(car1));
+            System.out.println("saving car " + carRepository.save(car2));
+            System.out.println("saving car " + carRepository.save(car3));
         }
     }
 }
