@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -150,8 +150,13 @@ class CarReservationControllerIT {
         String responseJson = result.getResponse().getContentAsString();
         CarReservation reservation = mapper.readValue(responseJson, CarReservation.class);
         Long id = reservation.getId();
-        this.mockMvc.perform(delete("/reservation/" + id))
-                .andExpect(status().isNoContent());
+        MvcResult mvcResult = this.mockMvc.perform(delete("/reservation/" + id))
+                .andExpectAll(
+                        status().isNoContent(),
+                        content().contentType(TEXT_PLAIN + ";charset=UTF-8")
+                ).andReturn();
+        String message = mvcResult.getResponse().getContentAsString();
+        assertEquals("Car reservation cancelled", message);
     }
 
     @Test

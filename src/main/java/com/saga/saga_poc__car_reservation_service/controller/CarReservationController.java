@@ -28,7 +28,7 @@ public class CarReservationController {
         return new ResponseEntity<>(carReservation, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/reservation/{id}")
+    @DeleteMapping(value = "/reservation/{id}")
     public ResponseEntity<String> cancelReservation(@PathVariable Long id) {
         this.carReservationService.cancelReservation(id);
         return new ResponseEntity<>("Car reservation cancelled", HttpStatus.NO_CONTENT);
