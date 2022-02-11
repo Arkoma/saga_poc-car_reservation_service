@@ -1,4 +1,4 @@
-package com.saga.saga_pochotel_reservation_service.model;
+package com.saga.saga_poc__car_reservation_service.model;
 
 public enum StatusEnum {
     IN_PROGRESS,

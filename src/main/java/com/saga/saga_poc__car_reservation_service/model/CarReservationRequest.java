@@ -1,4 +1,4 @@
-package com.saga.saga_pochotel_reservation_service.model;
+package com.saga.saga_poc__car_reservation_service.model;
 
 import lombok.Builder;
 import lombok.Data;
@@ -7,10 +7,10 @@ import java.util.Date;
 
 @Data
 @Builder
-public class HotelReservationRequest {
-    private Hotel hotel;
+public class CarReservationRequest {
+    private Car car;
     private Long reservationId;
-    private int room;
+    private String agency;
     private Date checkinDate;
     private Date checkoutDate;
 }
