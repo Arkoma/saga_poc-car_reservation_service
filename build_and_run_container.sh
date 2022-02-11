@@ -10,4 +10,4 @@ docker tag car-reservation-server:"$version" aaronburk/car-reservation-server:"$
 
 docker push aaronburk/car-reservation-server:"$version"
 
-docker run -p8882:8083 car-reservation-server:"$version"
+docker run -p8883:8083 car-reservation-server:"$version"
