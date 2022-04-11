@@ -23,9 +23,11 @@ public class CarReservationService {
     }
 
     public CarReservation makeReservation(CarReservationRequest request) throws NoSuchElementException{
-        Car car = carRepository.findByMakeAndModel(request.getCar().getMake(), request.getCar().getModel()).orElseThrow();
+        Car car = carRepository.findByMakeAndModel(request.getCarMake(), request.getCarModel()).orElseThrow();
         CarReservation carReservation = new CarReservation();
         carReservation.setCarId(car.getId());
+        carReservation.setCarMake(request.getCarMake());
+        carReservation.setCarModel(request.getCarModel());
         carReservation.setReservationId(request.getReservationId());
         carReservation.setCheckinDate(request.getCheckinDate());
         carReservation.setCheckoutDate(request.getCheckoutDate());

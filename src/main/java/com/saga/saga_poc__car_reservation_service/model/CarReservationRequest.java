@@ -8,7 +8,8 @@ import java.util.Date;
 @Data
 @Builder
 public class CarReservationRequest {
-    private Car car;
+    private String carMake;
+    private String carModel;
     private Long reservationId;
     private String agency;
     private Date checkinDate;

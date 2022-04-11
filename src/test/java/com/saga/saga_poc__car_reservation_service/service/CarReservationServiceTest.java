@@ -18,8 +18,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 
 @ExtendWith(MockitoExtension.class)
 class CarReservationServiceTest {
@@ -46,8 +53,8 @@ class CarReservationServiceTest {
 
     @Test
     void makeReservationSavesCarPassedIn() throws ParseException {
-        String carMake = "Ford";
-        String carModel = "Model-T";
+        final String carMake = "Ford";
+        final String carModel = "Model-T";
         Long carId = 1L;
         Long reservationId = 2L;
         Car car = new Car();
@@ -61,7 +68,8 @@ class CarReservationServiceTest {
         final Date checkoutDate = new SimpleDateFormat("dd MMM yyyy").parse("12 Feb 2022");
         CarReservationRequest request = CarReservationRequest.builder()
                 .reservationId(reservationId)
-                .car(car)
+                .carMake(carMake)
+                .carModel(carModel)
                 .agency(agencyName)
                 .checkinDate(checkinDate)
                 .checkoutDate(checkoutDate)

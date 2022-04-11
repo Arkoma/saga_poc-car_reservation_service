@@ -26,9 +26,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.http.MediaType.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -67,14 +74,17 @@ class CarReservationControllerIT {
     @BeforeEach
     void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+        final String make = "Ford";
+        final String model = "Model-T";
         car = new Car();
-        car.setMake("Ford");
-        car.setModel("Model-T");
+        car.setMake(make);
+        car.setModel(model);
         this.carRepository.deleteAll();
         car = this.carRepository.save(car);
         carReservationRequest = CarReservationRequest.builder()
                 .reservationId(reservationId)
-                .car(car)
+                .carMake(make)
+                .carModel(model)
                 .agency(agencyName)
                 .checkinDate(checkinDate)
                 .checkoutDate(checkoutDate)
@@ -108,6 +118,8 @@ class CarReservationControllerIT {
         assertAll(() -> {
             assertEquals(StatusEnum.RESERVED, actualResponse.getStatus());
             assertEquals(car.getId(), actualResponse.getCarId());
+            assertEquals(car.getMake(), actualResponse.getCarMake());
+            assertEquals(car.getModel(), actualResponse.getCarModel());
             assertEquals(this.reservationId, actualResponse.getReservationId());
             assertEquals(this.checkinDate, actualResponse.getCheckinDate());
             assertEquals(this.checkoutDate, actualResponse.getCheckoutDate());

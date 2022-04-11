@@ -4,13 +4,10 @@ import com.saga.saga_poc__car_reservation_service.model.CarReservation;
 import com.saga.saga_poc__car_reservation_service.model.CarReservationRequest;
 import com.saga.saga_poc__car_reservation_service.service.CarReservationService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static org.springframework.http.MediaType.*;
 
 @RestController
 public class CarReservationController {
