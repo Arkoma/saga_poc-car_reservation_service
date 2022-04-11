@@ -3,11 +3,14 @@ package com.saga.saga_poc__car_reservation_service.service;
 import com.saga.saga_poc__car_reservation_service.model.Car;
 import com.saga.saga_poc__car_reservation_service.model.CarReservation;
 import com.saga.saga_poc__car_reservation_service.model.CarReservationRequest;
+import com.saga.saga_poc__car_reservation_service.model.StatusEnum;
 import com.saga.saga_poc__car_reservation_service.repository.CarRepository;
 import com.saga.saga_poc__car_reservation_service.repository.CarReservationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -39,6 +42,9 @@ class CarReservationServiceTest {
 
     @Mock
     private CarReservationRepository carReservationRepository;
+
+    @Captor
+    private ArgumentCaptor<CarReservation> carReservationArgumentCaptor;
 
     private CarReservation carReservation;
 
@@ -100,5 +106,36 @@ class CarReservationServiceTest {
     void getAllReservationsCallsFindAll() {
         underTest.getAllReservations();
         verify(carReservationRepository, times(1)).findAll();
+    }
+
+    @Test
+    void statusSetToCancelledIfCarDoesNotExist() throws ParseException {
+        final String carMake = "Ferd";
+        final String carModel = "Mrdel-T";
+        Long carId = 1L;
+        Long reservationId = 2L;
+        Car car = new Car();
+        car.setId(carId);
+        car.setMake(carMake);
+        car.setModel(carModel);
+        when(carRepository.findByMakeAndModel(anyString(), anyString())).thenReturn(Optional.empty());
+        final String agencyName = "Hertz";
+        final Date checkinDate = new SimpleDateFormat("d MMM yyyy").parse("9 Feb 2022");
+        final Date checkoutDate = new SimpleDateFormat("dd MMM yyyy").parse("12 Feb 2022");
+        CarReservationRequest request = CarReservationRequest.builder()
+                .reservationId(reservationId)
+                .carMake(carMake)
+                .carModel(carModel)
+                .agency(agencyName)
+                .checkinDate(checkinDate)
+                .checkoutDate(checkoutDate)
+                .build();
+        underTest.makeReservation(request);
+        assertAll(() -> {
+            verify(carRepository, times(1)).findByMakeAndModel(carMake, carModel);
+            verify(carReservationRepository, times(1)).save(carReservationArgumentCaptor.capture());
+            CarReservation actual = carReservationArgumentCaptor.getValue();
+            assertEquals(StatusEnum.CANCELLED, actual.getStatus());
+        });
     }
 }

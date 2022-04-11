@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class CarReservationService {
@@ -23,9 +24,11 @@ public class CarReservationService {
     }
 
     public CarReservation makeReservation(CarReservationRequest request) throws NoSuchElementException{
-        Car car = carRepository.findByMakeAndModel(request.getCarMake(), request.getCarModel()).orElseThrow();
+        Optional<Car> optionalCar = carRepository.findByMakeAndModel(request.getCarMake(), request.getCarModel());
+        Car car = new Car();
+        if (optionalCar.isPresent()) car = optionalCar.get();
         CarReservation carReservation = new CarReservation();
-        carReservation.setCarId(car.getId());
+        carReservation.setCarId(car.getId() == null ? 0L : car.getId());
         carReservation.setCarMake(request.getCarMake());
         carReservation.setCarModel(request.getCarModel());
         carReservation.setReservationId(request.getReservationId());
@@ -33,7 +36,7 @@ public class CarReservationService {
         carReservation.setCheckoutDate(request.getCheckoutDate());
         carReservation.setAgency(request.getAgency());
         try {
-            carReservation.setStatus(StatusEnum.RESERVED);
+            carReservation.setStatus(car.getId() == 0L ? StatusEnum.CANCELLED : StatusEnum.RESERVED);
             carReservation = carReservationRepository.save(carReservation);
         } catch (Exception e) {
             carReservation.setStatus(StatusEnum.CANCELLED);
