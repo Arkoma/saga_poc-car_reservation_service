@@ -138,4 +138,19 @@ class CarReservationServiceTest {
             assertEquals(StatusEnum.CANCELLED, actual.getStatus());
         });
     }
+
+    @Test
+    void ifCarReservationFoundByReservationIdNoNewReservationSaved() {
+        final Long reservationId = 1L;
+        CarReservation reservationToFind = new CarReservation();
+        reservationToFind.setId(123L);
+        reservationToFind.setReservationId(reservationId);
+        when(carReservationRepository.findByReservationId(1L)).thenReturn(reservationToFind);
+        CarReservationRequest carReservationRequest = CarReservationRequest.builder()
+                .reservationId(reservationId)
+                .build();
+        CarReservation actual = underTest.makeReservation(carReservationRequest);
+        verify(carReservationRepository, times(0)).save(any(CarReservation.class));
+        assertEquals(reservationToFind.getId(), actual.getId());
+    }
 }

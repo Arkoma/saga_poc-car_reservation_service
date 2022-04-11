@@ -112,7 +112,7 @@ class CarReservationControllerIT {
 
     @Test
     void makeReservationEndpointReturnsReservation() throws Exception {
-        final MvcResult result = this.makeReservation();
+        final MvcResult result = this.makeReservation(reservationId);
         String responseJson = result.getResponse().getContentAsString();
         CarReservation actualResponse = mapper.readValue(responseJson, CarReservation.class);
         assertAll(() -> {
@@ -128,7 +128,8 @@ class CarReservationControllerIT {
         );
     }
 
-    private MvcResult makeReservation() throws Exception {
+    private MvcResult makeReservation(Long reservationId) throws Exception {
+        this.carReservationRequest.setReservationId(reservationId);
         String json = mapper.writeValueAsString(this.carReservationRequest);
         return this.mockMvc.perform(post("/reservation").contentType(APPLICATION_JSON_VALUE).content(json))
                 .andExpectAll(
@@ -141,7 +142,7 @@ class CarReservationControllerIT {
     @Test
     @Transactional
     void makeReservationEndpointSavesReservation() throws Exception {
-        final MvcResult result = this.makeReservation();
+        final MvcResult result = this.makeReservation(reservationId);
         String responseJson = result.getResponse().getContentAsString();
         CarReservation actualResponse = mapper.readValue(responseJson, CarReservation.class);
         CarReservation actualEntity = this.carReservationRepository.getById(actualResponse.getId());
@@ -158,7 +159,7 @@ class CarReservationControllerIT {
 
     @Test
     void cancelReservationEndpointExists() throws Exception {
-        final MvcResult result = this.makeReservation();
+        final MvcResult result = this.makeReservation(reservationId);
         String responseJson = result.getResponse().getContentAsString();
         CarReservation reservation = mapper.readValue(responseJson, CarReservation.class);
         Long id = reservation.getId();
@@ -174,7 +175,7 @@ class CarReservationControllerIT {
     @Test
     @Transactional
     void cancelReservationEndpointRemovesReservation() throws Exception {
-        final MvcResult result = this.makeReservation();
+        final MvcResult result = this.makeReservation(reservationId);
         String responseJson = result.getResponse().getContentAsString();
         CarReservation reservation = mapper.readValue(responseJson, CarReservation.class);
         Long id = reservation.getId();
@@ -188,7 +189,7 @@ class CarReservationControllerIT {
     
     @Test
     void getReservationEndpointExists() throws Exception {
-        final MvcResult result = this.makeReservation();
+        final MvcResult result = this.makeReservation(reservationId);
         String responseJson = result.getResponse().getContentAsString();
         CarReservation reservation = mapper.readValue(responseJson, CarReservation.class);
         Long id = reservation.getId();
@@ -218,8 +219,9 @@ class CarReservationControllerIT {
 
     @Test
     void testGetAll() throws Exception {
-        this.makeReservation();
-        this.makeReservation();
+        this.makeReservation(reservationId);
+        final Long newReservationId = 123L;
+        this.makeReservation(newReservationId);
         final MvcResult foundResult = this.mockMvc.perform(get("/reservations"))
                 .andExpectAll(
                         status().isOk(),

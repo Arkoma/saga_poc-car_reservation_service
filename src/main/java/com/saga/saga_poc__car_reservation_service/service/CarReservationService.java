@@ -23,11 +23,13 @@ public class CarReservationService {
         this.carReservationRepository = carReservationRepository;
     }
 
-    public CarReservation makeReservation(CarReservationRequest request) throws NoSuchElementException{
+    public CarReservation makeReservation(CarReservationRequest request) throws NoSuchElementException {
+        CarReservation foundReservation = carReservationRepository.findByReservationId(request.getReservationId());
+        if (foundReservation != null) return foundReservation;
+        CarReservation carReservation = new CarReservation();
         Optional<Car> optionalCar = carRepository.findByMakeAndModel(request.getCarMake(), request.getCarModel());
         Car car = new Car();
         if (optionalCar.isPresent()) car = optionalCar.get();
-        CarReservation carReservation = new CarReservation();
         carReservation.setCarId(car.getId() == null ? 0L : car.getId());
         carReservation.setCarMake(request.getCarMake());
         carReservation.setCarModel(request.getCarModel());
